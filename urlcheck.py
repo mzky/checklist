@@ -354,6 +354,6 @@ def main():
 
 
 if __name__ == '__main__':
-    subprocess.run(["python3", "m3ucheck.py"])
+    subprocess.run(["python3", "/mnt/m3ucheck.py"])
     print("探测json中的频道可用性...")
     main()
