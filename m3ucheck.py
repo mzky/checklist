@@ -15,16 +15,13 @@ M3U_URLS = [
     "https://live.zbds.org/tv/iptv6.m3u",
 ]
 
-# 设置请求超时时间
-REQUEST_TIMEOUT = 5
-
 def download_m3u(url, temp_file):
     """
     下载单个M3U文件并追加到临时文件中
     """
     try:
         print(f"正在下载: {url}")
-        response = requests.get(url, timeout=REQUEST_TIMEOUT)
+        response = requests.get(url, timeout=5)
         response.raise_for_status()
         
         with open(temp_file, 'a', encoding='utf-8') as f:
@@ -39,7 +36,7 @@ def download_all_m3u():
     """
     下载所有M3U文件并合并到temp.m3u
     """
-    temp_file = "temp.m3u"
+    temp_file = "/mnt/temp.m3u"
     
     # 清空或创建temp.m3u文件
     with open(temp_file, 'w', encoding='utf-8') as f:
@@ -67,7 +64,7 @@ def check_stream_availability(url):
         parsed_url = urlparse(url)
         if parsed_url.scheme in ['http', 'https']:
             # 对于HTTP/HTTPS流，发送HEAD请求检查
-            response = requests.head(url, timeout=REQUEST_TIMEOUT, allow_redirects=True)
+            response = requests.head(url, timeout=0.5, allow_redirects=True)
             return response.status_code == 200
         elif parsed_url.scheme in ['rtmp', 'rtsp']:
             # 对于RTMP/RTSP流，只检查URL格式
@@ -148,7 +145,7 @@ def filter_valid_channels(channels):
         if is_available:
             with lock:
                 valid_channels.append(channel)
-        print(f"{'✓' if is_available else '✗'} {channel['url']}")
+        # print(f"{'✓' if is_available else '✗'} {channel['url']}")
     
     # 创建并启动线程
     threads = []

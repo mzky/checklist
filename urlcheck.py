@@ -101,7 +101,7 @@ def main():
     # 遍历网址列表，获取JSON文件并解析
     for url in valid_urls:
         try:
-            # 发送GET请求获取JSON文件，设置超时时间为0.5秒
+            # 发送GET请求获取JSON文件，设置超时时间为5秒
             ip_start_index = url.find("//") + 2
             ip_dot_start = url.find(".") + 1
             ip_index_second = url.find("/", ip_dot_start)
@@ -109,7 +109,7 @@ def main():
             ip_address = url[ip_start_index:ip_index_second]
             url_x = f"{base_url}{ip_address}"
             json_url = f"{url}"
-            response = requests.get(json_url, timeout=0.5)
+            response = requests.get(json_url, timeout=5)
             json_data = response.json()
             try:
                 # 解析JSON文件，获取name和url字段
@@ -194,23 +194,23 @@ def main():
                     elapsed_time = time.time() - start_time
                     if response.status_code != 200:
                         raise Exception(f"Invalid response status: {response.status_code}")
-                    print(f"✓ 可用频道: {channel_name} ({channel_url}) - 状态码: {response.status_code}, 响应时间: {elapsed_time:.2f}秒")
+                    # print(f"✓ 可用频道: {channel_name} ({channel_url}) - 状态码: {response.status_code}, 响应时间: {elapsed_time:.2f}秒")
                 except requests.exceptions.Timeout:
                     # 如果超时，将频道添加到错误列表跳过
                     error_channel = channel_name, channel_url
                     error_channels.append(error_channel)
-                    print(f"✗ 超时频道: {channel_name} ({channel_url}) - 请求超时")
+                    # print(f"✗ 超时频道: {channel_name} ({channel_url}) - 请求超时")
                     numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                    print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    # print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
                     task_queue.task_done()
                     continue
                 except requests.exceptions.RequestException as e:
                     # 如果其他网络错误，将频道添加到错误列表并跳过
                     error_channel = channel_name, channel_url
                     error_channels.append(error_channel)
-                    print(f"✗ 错误频道: {channel_name} ({channel_url}) - 错误: {str(e)}")
+                    # print(f"✗ 错误频道: {channel_name} ({channel_url}) - 错误: {str(e)}")
                     numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                    print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    # print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
                     task_queue.task_done()
                     continue
                 
@@ -247,18 +247,18 @@ def main():
                     result = channel_name, channel_url, f"{normalized_speed:.3f} MB/s"
                     results.append(result)
                     numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                    print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    # print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
                 else:
                     # 如果没有内容，将频道添加到错误列表
                     error_channel = channel_name, channel_url
                     error_channels.append(error_channel)
                     numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                    print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    # print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
             except Exception as e:
                 error_channel = channel_name, channel_url
                 error_channels.append(error_channel)
                 numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                # print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
             # 标记任务完成
             task_queue.task_done()
     # 创建多个工作线程
@@ -328,13 +328,32 @@ def main():
                     file.write(f'#EXTINF:-1 tvg-name="{channel_name}" tvg-logo="http://epg.51zmt.top:8000/tb1/qt/{channel_name}.png" group-title="其他频道",{channel_name}\n')
                     file.write(f"{channel_url}\n")
                     channel_counters[channel_name] = 1
-        
-        # 添加更新时间频道
-        import datetime
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file.write(f'#EXTINF:-1 tvg-name="更新时间" tvg-logo="" group-title="系统信息",{current_time}\n')
-        file.write(f"http://example.com/update_time.mp4\n")
+
+    # 追加temp.m3u的内容到/mnt/itvlist.m3u
+    try:
+        with open("/mnt/temp.m3u", "r", encoding="utf-8") as temp_file:
+            # 跳过M3U头部
+            lines = temp_file.readlines()
+            if lines and lines[0].startswith("#EXTM3U"):
+                lines = lines[1:]
+            
+            # 追加内容到/mnt/itvlist.m3u
+            with open("/mnt/itvlist.m3u", "a", encoding="utf-8") as itvlist_file:
+                itvlist_file.writelines(lines)
+                 # 添加更新时间频道
+                import datetime
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                itvlist_file.write(f'#EXTINF:-1 tvg-name="更新时间" tvg-logo="" group-title="系统信息",{current_time}\n')
+                itvlist_file.write(f"http://example.com/update_time.mp4\n")
+        print("已将/mnt/temp.m3u内容追加到/mnt/itvlist.m3u")
+        os.remove("/mnt/temp.m3u")
+    except FileNotFoundError:
+        print("未找到/mnt/temp.m3u文件，跳过追加操作")
+    except Exception as e:
+        print(f"追加/mnt/temp.m3u内容时出错: {e}")
+
 
 if __name__ == '__main__':
     subprocess.run(["python3", "m3ucheck.py"])
+    print("探测json中的频道可用性...")
     main()
