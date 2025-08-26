@@ -520,7 +520,7 @@ async def modify_urls(url):
 async def is_url_accessible(session, url, semaphore):
     async with semaphore:
         try:
-            timeout = aiohttp.ClientTimeout(total=3)  # 按规范设置3秒超时
+            timeout = aiohttp.ClientTimeout(total=5)  # 按规范设置5秒超时
             async with session.get(url, timeout=timeout) as response:
                 if response.status == 200:
                     logger.info(f"发现可用URL: {url}")
@@ -555,7 +555,7 @@ async def fetch_json(session, url, semaphore):
             ip_address = url[ip_start_index:ip_index_second]
             url_x = f"{base_url}{ip_address}"
 
-            timeout = aiohttp.ClientTimeout(total=3)  # 按规范设置3秒超时
+            timeout = aiohttp.ClientTimeout(total=5)  # 按规范设置5秒超时
             async with session.get(url, timeout=timeout) as response:
                 json_data = await response.json()
                 results = []
@@ -609,7 +609,7 @@ async def main():
     unique_urls = set(x_urls)
 
     # 提高并发数和配置连接池参数，按照最佳实践优化
-    semaphore = asyncio.Semaphore(200)
+    semaphore = asyncio.Semaphore(100)
     
     # 配置连接器，优化网络性能
     connector = aiohttp.TCPConnector(
@@ -658,14 +658,14 @@ async def main():
         while True:
             try:
                 # 从队列中获取一个任务
-                channel_name, channel_url = task_queue.get(timeout=2)
+                channel_name, channel_url = task_queue.get(timeout=5)
                 logger.debug(f"正在检测频道：{channel_name}, URL：{channel_url}")
                 
                 # 检测流稳定性 - 使用TSStreamChecker进行真正的TS流解析
                 checker = TSStreamChecker(
                     check_duration=5,          # 5秒检测时间
-                    response_time_threshold=150,  # 响应时间阈值150ms
-                    request_timeout=2            # 按规范设置1秒超时
+                    response_time_threshold=120,  # 响应时间阈值120ms
+                    request_timeout=5           # 按规范设置5秒超时
                 )
                 is_stable = checker.check_stream(channel_url)
                 
