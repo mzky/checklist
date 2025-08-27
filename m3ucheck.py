@@ -26,8 +26,8 @@ def get_session():
     if _global_session is None:
         _global_session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(
-            pool_connections=20, 
-            pool_maxsize=50,
+            pool_connections=50, 
+            pool_maxsize=10,
             max_retries=1
         )
         _global_session.mount('http://', adapter)
@@ -633,9 +633,9 @@ async def main():
     
     # 配置连接器，优化网络性能
     connector = aiohttp.TCPConnector(
-        limit=300,           # 总连接数
-        limit_per_host=50,   # 每主机连接数
-        ttl_dns_cache=300,   # DNS缓存时间
+        limit=100,           # 总连接数
+        limit_per_host=10,   # 每主机连接数
+        ttl_dns_cache=100,   # DNS缓存时间
         use_dns_cache=True,
         keepalive_timeout=30 # Keep-alive超时
     )
@@ -685,7 +685,7 @@ async def main():
                 
                 # 检测流稳定性 - 使用TSStreamChecker进行真正的TS流解析
                 checker = TSStreamChecker(
-                    check_duration=5,          # 5秒检测时间
+                    check_duration=3,          # 5秒检测时间
                     response_time_threshold=100,  # 响应时间阈值
                     request_timeout=5           # 按规范设置5秒超时
                 )
@@ -730,7 +730,7 @@ async def main():
             return float('inf')
 
     # 使用ThreadPoolExecutor管理线程池，更安全和高效
-    num_workers = 20
+    num_workers = 10
     threads = []
     
     for _ in range(num_workers):
@@ -791,7 +791,7 @@ async def main():
         {"name": "卡通频道","keywords": ["少儿", "卡通", "动画", "儿童","宝贝","哈哈"]},
         {"name": "体育频道","keywords": ["体育", "赛事", "奥运", "英超", "NBA"]},
         {"name": "其他频道","keywords": [""],"exclude_keywords": ["CCTV","卫视","体育", "赛事", "奥运", "英超", "NBA",
-        "IPTV","电影", "影院", "影视","少儿", "卡通", "动画", "儿童","宝贝","测试","快乐购","广告"]} # exclude_keywords 是排除的关键字
+        "IPTV","电影", "影院", "影视","少儿", "卡通", "动画", "儿童","宝贝","哈哈","测试","快乐购","广告"]} # exclude_keywords 是排除的关键字
     ]
 
     with open("itvlist.m3u", 'w', encoding='utf-8') as file:
