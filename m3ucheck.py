@@ -397,13 +397,13 @@ class TSStreamChecker:
             # 多数合格则认为整体合格
             qualified_count = sum(results)
             total_count = len(results)
-            logger.info(f"检测完成，{qualified_count}/{total_count}个TS片段合格")
+            logger.debug(f"检测完成，{qualified_count}/{total_count}个TS片段合格")
             return qualified_count > total_count / 2
         else:
             # 直接检测TS流
-            logger.info(f"开始直接检测TS流: {url}")
+            logger.debug(f"开始直接检测TS流: {url}")
             result = await self._check_ts_stream(session, url)
-            logger.info(f"TS流直接检测结果: {'合格' if result else '不合格'}")
+            logger.debug(f"TS流直接检测结果: {'合格' if result else '不合格'}")
             return result
 
     async def parse_playlist(self, session, url: str) -> List[str]:
@@ -430,7 +430,7 @@ class TSStreamChecker:
             
             # 去重并返回前5个TS片段地址（避免过多片段检测耗时）
             unique_ts_urls = list(dict.fromkeys(ts_urls))
-            logger.info(f"从{url}解析到{len(unique_ts_urls)}个TS片段，返回前5个")
+            logger.debug(f"从{url}解析到{len(unique_ts_urls)}个TS片段，返回前5个")
             return unique_ts_urls[:5]
         except Exception as e:
             logger.error(f"解析播放列表失败: {url}, 错误: {str(e)}")
@@ -565,7 +565,7 @@ async def check_urls(session, urls, semaphore):
             task = asyncio.create_task(is_url_accessible(session, modified_url, semaphore))
             tasks.append(task)
             logger.debug(f"Checking {modified_url} ...")
-        logger.info(f"Checking {url} ...")
+        logger.debug(f"Checking {url} ...")
     results = await asyncio.gather(*tasks)
     valid_urls = [result for result in results if result]
     return valid_urls
