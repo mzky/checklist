@@ -352,6 +352,8 @@ class TSStreamChecker:
 
 def clean_channel_name(name):
     """清理频道名称，统一格式"""
+    # 将名称转换为大写
+    name = name.upper()
     # 定义所有替换规则
     replacement_rules = {
         # 基础清理规则
@@ -364,13 +366,22 @@ def clean_channel_name(name):
             "HD": "", 
             "标清": "",
             "频道": "", 
+            "快乐购":"",
+            "*": "", 
             "-": "", 
             " ": "", 
             "PLUS": "+", 
             "＋": "+",
             "(": "", 
             ")": "",
-            "超":""
+            "超":"",
+            "KAKU少儿"："卡酷动画",
+            "卡通动画": "卡酷动画",
+            "酷卡动画": "卡酷动画",
+            "北京少儿": "卡酷动画",
+            "北京卡通": "卡酷动画",
+            "嘉佳卡": "嘉佳卡通",
+
         },
         # CCTV频道专用替换规则
         "cctv_channels": {
@@ -386,6 +397,7 @@ def clean_channel_name(name):
             "CCTV7军农": "CCTV7", 
             "CCTV7农业": "CCTV7", 
             "CCTV7国防军事": "CCTV7",
+            "CCTV17军事": "CCTV7",
             "CCTV8电视剧": "CCTV8", 
             "CCTV9记录": "CCTV9", 
             "CCTV9纪录": "CCTV9",
@@ -609,12 +621,12 @@ async def main():
     unique_urls = set(x_urls)
 
     # 提高并发数和配置连接池参数，按照最佳实践优化
-    semaphore = asyncio.Semaphore(100)
+    semaphore = asyncio.Semaphore(10)
     
     # 配置连接器，优化网络性能
     connector = aiohttp.TCPConnector(
-        limit=300,           # 总连接数
-        limit_per_host=50,   # 每主机连接数
+        limit=100,           # 总连接数
+        limit_per_host=10,   # 每主机连接数
         ttl_dns_cache=300,   # DNS缓存时间
         use_dns_cache=True,
         keepalive_timeout=30 # Keep-alive超时
@@ -720,7 +732,7 @@ async def main():
     # 对结果进行排序（按频道名称排序）
     results.sort(key=lambda x: channel_key(x[0]))
 
-    result_counter = 9  # 每个频道需要的个数
+    result_counter = 12  # 每个频道最多个数
 
     def write_channel_to_m3u(file, channel_name, channel_url, group_title):
         """写入单个频道到M3U文件"""
@@ -757,10 +769,11 @@ async def main():
         {"name": "央视频道","keywords": ["CCTV"]},
         {"name": "卫视频道","keywords": ["卫视"]},
         {"name": "电影频道","keywords": ["电影", "影院", "影视"]},
-        {"name": "卡通频道","keywords": ["少儿", "卡通", "动画", "儿童","宝贝"]},
+        {"name": "IPTV频道","keywords": ["IPTV"]},
+        {"name": "卡通频道","keywords": ["少儿", "卡通", "动画", "儿童","宝贝","哈哈"]},
         {"name": "体育频道","keywords": ["体育", "赛事", "奥运", "英超", "NBA"]},
         {"name": "其他频道","keywords": [""],"exclude_keywords": ["CCTV","卫视","体育", "赛事", "奥运", "英超", "NBA",
-        "电影", "影院", "影视","少儿", "卡通", "动画", "儿童","宝贝","测试"]} # exclude_keywords 是排除的关键字
+        "IPTV","电影", "影院", "影视","少儿", "卡通", "动画", "儿童","宝贝","测试"]} # exclude_keywords 是排除的关键字
     ]
 
     with open("itvlist.m3u", 'w', encoding='utf-8') as file:
@@ -781,7 +794,7 @@ async def main():
         
         # 添加更新时间频道
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file.write(f'#EXTINF:-1 tvg-name="更新时间" tvg-logo="" group-title="更新时间",{current_time}\n')
+        file.write(f'#EXTINF:-1 tvg-name="{current_time}" tvg-logo="https://gitee.com/mytv-android/myTVlogo/raw/main/img/Dog狗频道.png" group-title="更新时间",{current_time}\n')
         file.write(f"http://example.com/update_time.mp4\n")
 
 
