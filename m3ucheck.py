@@ -28,7 +28,7 @@ def get_session():
         adapter = requests.adapters.HTTPAdapter(
             pool_connections=20, 
             pool_maxsize=50,
-            max_retries=3
+            max_retries=1
         )
         _global_session.mount('http://', adapter)
         _global_session.mount('https://', adapter)
@@ -43,14 +43,96 @@ def cleanup_session():
         _global_session.close()
         _global_session = None
 
+urls = [
+"http://1.87.218.1:7878",
+"http://1.195.130.1:9901",
+"http://1.195.131.1:9901",
+"http://1.197.250.1:9901",
+"http://39.152.171.1:9901",
+"http://47.109.181.1:88",
+"http://47.116.70.1:9901",
+"http://49.232.48.1:9901",
+"http://58.19.133.1:9901",
+"http://58.57.40.1:9901",
+"http://59.38.45.1:8090",
+"http://60.255.47.1:8801",
+"http://61.136.172.1:9901",
+"http://61.156.228.1:8154",
+"http://101.66.194.1:9901",
+"http://101.66.195.1:9901",
+"http://101.66.198.1:9901",
+"http://101.66.199.1:9901",
+"http://101.74.28.1:9901",
+"http://103.39.222.1:9999",
+"http://106.42.34.1:888",
+"http://106.42.35.1:888",
+"http://106.118.70.1:9901",
+"http://110.253.83.1:888",
+"http://111.8.242.1:8085",
+"http://111.9.163.1:9901",
+"http://112.14.1:9901",
+"http://112.16.14.1:9901",
+"http://112.26.18.1:9901",
+"http://112.27.145.1:9901",
+"http://112.91.103.1:9919",
+"http://112.99.193.1:9901",
+"http://112.234.23.1:9901",
+"http://112.132.160.1:9901",
+"http://113.57.93.1:9900",
+"http://113.195.162.1:9901",
+"http://113.201.61.1:9901",
+"http://115.48.160.1:9901",
+"http://115.59.9.1:9901",
+"http://116.128.242.1:9901",
+"http://117.174.99.1:9901",
+"http://119.125.131.1:9901",
+"http://121.19.134.1:808",
+"http://121.29.191.1:8000",
+"http://121.43.180.1:9901",
+"http://121.56.39.1:808",
+"http://122.227.100.1:9901",
+"http://123.13.247.1:7000",
+"http://123.54.220.1:9901",
+"http://123.129.70.1:9901",
+"http://123.130.84.1:8154",
+"http://123.139.57.1:9901",
+"http://123.182.60.1:9002",
+"http://124.152.247.1:2001",
+"http://125.42.148.1:9901",
+"http://125.42.228.1:9999",
+"http://125.43.244.1:9901",
+"http://125.125.236.1:9901",
+"http://159.75.75.1:8888",
+"http://171.9.68.1:8099",
+"http://180.213.174.1:9901",
+"http://182.114.48.1:9901",
+"http://182.114.49.1:9901",
+"http://182.114.214.1:9901",
+"http://182.120.229.1:9901",
+"http://183.10.180.1:9901",
+"http://183.131.246.1:9901",
+"http://183.166.62.1:81",
+"http://183.255.41.1:9901",
+"http://211.142.224.1:2023",
+"http://218.13.170.1:9901",
+"http://218.77.81.1:9901",
+"http://218.87.237.1:9901",
+"http://220.248.173.1:9901",
+"http://221.2.148.1:8154",
+"http://221.13.235.1:9901",
+"http://222.172.183.1:808",
+"http://222.243.221.1:9901",
+"http://223.241.247.1:9901"
+]
+
 class TSStreamChecker:
     """TS流检测器，通过解析TS包数据来检测流的稳定性和响应时间"""
     
     def __init__(self, 
                  buffer_size: int = 8192, 
-                 check_duration: int = 5,
+                 check_duration: int = 3,
                  response_time_threshold: int = 120,  # 响应时间阈值(毫秒)
-                 request_timeout: int = 5,            # 请求超时时间(秒)
+                 request_timeout: int = 3,            # 请求超时时间(秒)
                  max_history_size: int = 20):         # 最大历史记录数量，防止内存泄露
         """
         TS流检测模块初始化
@@ -185,7 +267,7 @@ class TSStreamChecker:
         is_stable = rate_std < 5 and loss_rate < 0.01
         is_fast_response = avg_response_time < self.response_time_threshold
         
-        logger.info(f"TS流检测结果 - 速率稳定性: {rate_std:.2f}, 丢包率: {loss_rate:.4f}, 平均响应时间: {avg_response_time:.2f} ms")
+        logger.info(f"TS流检测结果 - 速率波动: {rate_std:.2f}, 丢包率: {loss_rate:.4f}, 响应时间: {avg_response_time:.2f}ms, 结果: {is_stable and is_fast_response}")
         
         return is_stable and is_fast_response
 
@@ -265,19 +347,16 @@ class TSStreamChecker:
                                 if chunk_count > 10:  # 收到一定数量的数据块后继续
                                     break
                     
-                    except Exception as stream_e:
-                        logger.debug(f"数据流处理异常: {str(stream_e)}")
+                    except Exception as e:
+                        logger.debug(f"数据流处理异常: {str(e)}")
                         continue
                     
                     finally:
                         # 确保关闭响应流
                         response.close()
 
-                except requests.exceptions.RequestException as e:
-                    logger.debug(f"请求失败: {str(e)}，继续检测...")
-                    continue
                 except Exception as e:
-                    logger.error(f"请求异常: {str(e)}")
+                    logger.debug(f"请求异常: {str(e)}")
                     continue
 
         except Exception as e:
@@ -433,99 +512,26 @@ def clean_channel_name(name):
     
     return name
 
-urls = [
-"http://1.87.218.1:7878",
-"http://1.195.130.1:9901",
-"http://1.195.131.1:9901",
-"http://1.197.250.1:9901",
-"http://39.152.171.1:9901",
-"http://47.109.181.1:88",
-"http://47.116.70.1:9901",
-"http://49.232.48.1:9901",
-"http://58.19.133.1:9901",
-"http://58.57.40.1:9901",
-"http://59.38.45.1:8090",
-"http://60.255.47.1:8801",
-"http://61.136.172.1:9901",
-"http://61.156.228.1:8154",
-"http://101.66.194.1:9901",
-"http://101.66.195.1:9901",
-"http://101.66.198.1:9901",
-"http://101.66.199.1:9901",
-"http://101.74.28.1:9901",
-"http://103.39.222.1:9999",
-"http://106.42.34.1:888",
-"http://106.42.35.1:888",
-"http://106.118.70.1:9901",
-"http://110.253.83.1:888",
-"http://111.8.242.1:8085",
-"http://111.9.163.1:9901",
-"http://112.14.1:9901",
-"http://112.16.14.1:9901",
-"http://112.26.18.1:9901",
-"http://112.27.145.1:9901",
-"http://112.91.103.1:9919",
-"http://112.99.193.1:9901",
-"http://112.234.23.1:9901",
-"http://112.132.160.1:9901",
-"http://113.57.93.1:9900",
-"http://113.195.162.1:9901",
-"http://113.201.61.1:9901",
-"http://115.48.160.1:9901",
-"http://115.59.9.1:9901",
-"http://116.128.242.1:9901",
-"http://117.174.99.1:9901",
-"http://119.125.131.1:9901",
-"http://121.19.134.1:808",
-"http://121.29.191.1:8000",
-"http://121.43.180.1:9901",
-"http://121.56.39.1:808",
-"http://122.227.100.1:9901",
-"http://123.13.247.1:7000",
-"http://123.54.220.1:9901",
-"http://123.129.70.1:9901",
-"http://123.130.84.1:8154",
-"http://123.139.57.1:9901",
-"http://123.182.60.1:9002",
-"http://124.152.247.1:2001",
-"http://125.42.148.1:9901",
-"http://125.42.228.1:9999",
-"http://125.43.244.1:9901",
-"http://125.125.236.1:9901",
-"http://159.75.75.1:8888",
-"http://171.9.68.1:8099",
-"http://180.213.174.1:9901",
-"http://182.114.48.1:9901",
-"http://182.114.49.1:9901",
-"http://182.114.214.1:9901",
-"http://182.120.229.1:9901",
-"http://183.10.180.1:9901",
-"http://183.131.246.1:9901",
-"http://183.166.62.1:81",
-"http://183.255.41.1:9901",
-"http://211.142.224.1:2023",
-"http://218.13.170.1:9901",
-"http://218.77.81.1:9901",
-"http://218.87.237.1:9901",
-"http://220.248.173.1:9901",
-"http://221.2.148.1:8154",
-"http://221.13.235.1:9901",
-"http://222.172.183.1:808",
-"http://222.243.221.1:9901",
-"http://223.241.247.1:9901"
-]
-
 async def modify_urls(url):
+    """使用urllib.parse解析URL并生成修改后的URL列表"""
     modified_urls = []
-    ip_start_index = url.find("//") + 2
-    ip_end_index = url.find(":", ip_start_index)
-    base_url = url[:ip_start_index]
-    ip_address = url[ip_start_index:ip_end_index]
-    port = url[ip_end_index:]
+    parsed_url = urlparse(url)
+    
+    if not parsed_url.hostname:
+        return modified_urls
+    
+    # 获取IP地址的前三段
+    ip_parts = parsed_url.hostname.split('.')
+    if len(ip_parts) != 4:
+        return modified_urls
+    
+    base_ip = '.'.join(ip_parts[:3])
+    port_str = f":{parsed_url.port}" if parsed_url.port else ""
     ip_end = "/iptv/live/1000.json?key=txiptv"
+    
     for i in range(1, 254):
-        modified_ip = f"{ip_address[:-1]}{i}"
-        modified_url = f"{base_url}{modified_ip}{port}{ip_end}"
+        modified_ip = f"{base_ip}.{i}"
+        modified_url = f"{parsed_url.scheme}://{modified_ip}{port_str}{ip_end}"
         modified_urls.append(modified_url)
     return modified_urls
 
@@ -537,8 +543,7 @@ async def is_url_accessible(session, url, semaphore):
                 if response.status == 200:
                     logger.info(f"发现可用URL: {url}")
                     return url
-        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
-            logger.debug(f"URL不可访问: {url}, 错误: {str(e)}")
+
         except Exception as e:
             logger.debug(f"检测URL时发生异常: {url}, 错误: {str(e)}")
     return None
@@ -560,12 +565,13 @@ async def check_urls(session, urls, semaphore):
 async def fetch_json(session, url, semaphore):
     async with semaphore:
         try:
-            ip_start_index = url.find("//") + 2
-            ip_dot_start = url.find(".") + 1
-            ip_index_second = url.find("/", ip_dot_start)
-            base_url = url[:ip_start_index]
-            ip_address = url[ip_start_index:ip_index_second]
-            url_x = f"{base_url}{ip_address}"
+            parsed_url = urlparse(url)
+            if not parsed_url.hostname:
+                return []
+            
+            # 构建基础URL（协议 + 主机名 + 端口）
+            port_str = f":{parsed_url.port}" if parsed_url.port else ""
+            url_x = f"{parsed_url.scheme}://{parsed_url.hostname}{port_str}"
 
             timeout = aiohttp.ClientTimeout(total=5)  # 按规范设置5秒超时
             async with session.get(url, timeout=timeout) as response:
@@ -590,14 +596,11 @@ async def fetch_json(session, url, semaphore):
                             name = clean_channel_name(name)
                             results.append(f"{name},{urld}")
                             
-                except (KeyError, TypeError) as e:
+                except Exception as e:
                     logger.debug(f"解析JSON数据失败: {url}, 错误: {str(e)}")
                     
                 return results
                 
-        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
-            logger.debug(f"获取JSON失败: {url}, 错误: {str(e)}")
-            return []
         except Exception as e:
             logger.debug(f"处理JSON时发生异常: {url}, 错误: {str(e)}")
             return []
@@ -606,27 +609,30 @@ async def main():
     x_urls = []
     for url in urls:
         url = url.strip()
-        ip_start_index = url.find("//") + 2
-        ip_end_index = url.find(":", ip_start_index)
-        ip_dot_start = url.find(".") + 1
-        ip_dot_second = url.find(".", ip_dot_start) + 1
-        ip_dot_three = url.find(".", ip_dot_second) + 1
-        base_url = url[:ip_start_index]
-        ip_address = url[ip_start_index:ip_dot_three]
-        port = url[ip_end_index:]
-        ip_end = "1"
-        modified_ip = f"{ip_address}{ip_end}"
-        x_url = f"{base_url}{modified_ip}{port}"
+        parsed_url = urlparse(url)
+        
+        if not parsed_url.hostname:
+            continue
+            
+        # 获取IP地址的前三段并添加.1
+        ip_parts = parsed_url.hostname.split('.')
+        if len(ip_parts) != 4:
+            continue
+            
+        base_ip = '.'.join(ip_parts[:3])
+        modified_ip = f"{base_ip}.1"
+        port_str = f":{parsed_url.port}" if parsed_url.port else ""
+        x_url = f"{parsed_url.scheme}://{modified_ip}{port_str}"
         x_urls.append(x_url)
     unique_urls = set(x_urls)
 
     # 提高并发数和配置连接池参数，按照最佳实践优化
-    semaphore = asyncio.Semaphore(10)
+    semaphore = asyncio.Semaphore(100)
     
     # 配置连接器，优化网络性能
     connector = aiohttp.TCPConnector(
-        limit=100,           # 总连接数
-        limit_per_host=10,   # 每主机连接数
+        limit=300,           # 总连接数
+        limit_per_host=50,   # 每主机连接数
         ttl_dns_cache=300,   # DNS缓存时间
         use_dns_cache=True,
         keepalive_timeout=30 # Keep-alive超时
@@ -668,41 +674,51 @@ async def main():
 
     def worker():
         while True:
+            task_completed = False
             try:
                 # 从队列中获取一个任务
                 channel_name, channel_url = task_queue.get(timeout=5)
+                task_completed = True  # 标记任务已成功获取
                 logger.debug(f"正在检测频道：{channel_name}, URL：{channel_url}")
                 
                 # 检测流稳定性 - 使用TSStreamChecker进行真正的TS流解析
                 checker = TSStreamChecker(
                     check_duration=5,          # 5秒检测时间
-                    response_time_threshold=120,  # 响应时间阈值120ms
+                    response_time_threshold=100,  # 响应时间阈值
                     request_timeout=5           # 按规范设置5秒超时
                 )
                 is_stable = checker.check_stream(channel_url)
                 
+                # 获取平均响应时间
+                avg_response_time = np.mean(checker.stats["response_times"]) if checker.stats["response_times"] else float('inf')
+                
                 # 线程安全地更新结果
                 with results_lock:
                     if is_stable:
-                        # 稳定的流，保留并添加到结果中
-                        result = channel_name, channel_url, "稳定"
+                        result = channel_name, channel_url, "稳定", avg_response_time
                         results.append(result)
                         print_progress("稳定", channel_name, channel_url)
                     else:
-                        # 不稳定的流，剔除
                         error_channel = channel_name, channel_url
                         error_channels.append(error_channel)
                         print_progress("不稳定", channel_name, channel_url)
                         
             except Exception as e:
-                # 发生异常的流，也剔除
-                with results_lock:
-                    error_channel = channel_name, channel_url
-                    error_channels.append(error_channel)
-                    print_progress("异常", channel_name, error_msg=str(e))
+                # 处理异常，包括超时异常
+                if task_completed:
+                    # 只有在成功获取任务后发生异常才记录错误
+                    with results_lock:
+                        error_channel = channel_name, channel_url
+                        error_channels.append(error_channel)
+                        print_progress("异常", channel_name, error_msg=str(e))
+                else:
+                    # 超时异常，退出循环
+                    break
+                    
             finally:
-                # 确保任务标记完成
-                task_queue.task_done()
+                # 只有在成功获取任务时才调用task_done()
+                if task_completed:
+                    task_queue.task_done()
 
     def channel_key(channel_name):
         match = re.search(r'\d+', channel_name)
@@ -712,7 +728,7 @@ async def main():
             return float('inf')
 
     # 使用ThreadPoolExecutor管理线程池，更安全和高效
-    num_workers = 10
+    num_workers = 20
     threads = []
     
     for _ in range(num_workers):
@@ -725,18 +741,18 @@ async def main():
         channel_name, channel_url = result.split(',')
         task_queue.put((channel_name, channel_url))
 
-
     # 等待所有任务完成
     task_queue.join()
 
-    # 对结果进行排序（按频道名称排序）
-    results.sort(key=lambda x: channel_key(x[0]))
+    # 对结果进行排序（先按频道名称排序，再按响应时间排序）
+    results.sort(key=lambda x: (channel_key(x[0]), x[3] if len(x) > 3 else float('inf')))
 
     result_counter = 12  # 每个频道最多个数
 
-    def write_channel_to_m3u(file, channel_name, channel_url, group_title):
-        """写入单个频道到M3U文件"""
-        file.write(f'#EXTINF:-1 tvg-name="{channel_name}" tvg-logo="https://gitee.com/mytv-android/myTVlogo/raw/main/img/{channel_name}.png" group-title="{group_title}",{channel_name}\n')
+    def write_channel_to_m3u(file, channel_name, channel_url, group_title, response_time=float('inf')):
+        """写入单个频道到M3U文件，包含响应时间信息"""
+        # 在EXTINF标签中添加自定义的response-time属性
+        file.write(f'#EXTINF:-1 tvg-name="{channel_name}" tvg-logo="https://gitee.com/mytv-android/myTVlogo/raw/main/img/{channel_name}.png" group-title="{group_title}" response-time="{response_time:.0f}ms",{channel_name}\n')
         file.write(f"{channel_url}\n")
 
     def match_channel_category(channel_name, keywords, exclude_keywords=None):
@@ -752,16 +768,16 @@ async def main():
     def write_channels_by_category(file, results, keywords, group_title, channel_counters, exclude_keywords=None):
         """按分类写入频道"""
         for result in results:
-            channel_name, channel_url, speed = result
+            channel_name, channel_url, speed, avg_response_time = result
             if match_channel_category(channel_name, keywords, exclude_keywords):
                 if channel_name in channel_counters:
                     if channel_counters[channel_name] >= result_counter:
                         continue
                     else:
-                        write_channel_to_m3u(file, channel_name, channel_url, group_title)
+                        write_channel_to_m3u(file, channel_name, channel_url, group_title, avg_response_time)
                         channel_counters[channel_name] += 1
                 else:
-                    write_channel_to_m3u(file, channel_name, channel_url, group_title)
+                    write_channel_to_m3u(file, channel_name, channel_url, group_title, avg_response_time)
                     channel_counters[channel_name] = 1
 
     # 定义频道分类配置
@@ -793,7 +809,7 @@ async def main():
             )
         
         # 添加更新时间频道
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         file.write(f'#EXTINF:-1 tvg-name="{current_time}" tvg-logo="https://gitee.com/mytv-android/myTVlogo/raw/main/img/Dog狗频道.png" group-title="更新时间",{current_time}\n')
         file.write(f"http://example.com/update_time.mp4\n")
 
