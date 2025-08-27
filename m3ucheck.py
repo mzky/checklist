@@ -445,7 +445,6 @@ def clean_channel_name(name):
             "HD": "", 
             "标清": "",
             "频道": "", 
-            "快乐购":"",
             "*": "", 
             "-": "", 
             " ": "", 
@@ -789,7 +788,7 @@ async def main():
         {"name": "卡通频道","keywords": ["少儿", "卡通", "动画", "儿童","宝贝","哈哈"]},
         {"name": "体育频道","keywords": ["体育", "赛事", "奥运", "英超", "NBA"]},
         {"name": "其他频道","keywords": [""],"exclude_keywords": ["CCTV","卫视","体育", "赛事", "奥运", "英超", "NBA",
-        "IPTV","电影", "影院", "影视","少儿", "卡通", "动画", "儿童","宝贝","测试"]} # exclude_keywords 是排除的关键字
+        "IPTV","电影", "影院", "影视","少儿", "卡通", "动画", "儿童","宝贝","测试","快乐购","广告"]} # exclude_keywords 是排除的关键字
     ]
 
     with open("itvlist.m3u", 'w', encoding='utf-8') as file:
