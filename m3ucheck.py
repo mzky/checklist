@@ -605,6 +605,9 @@ async def fetch_json(session, url, semaphore):
             return []
 
 async def main():
+    start_time = time.time()  # 记录开始时间
+    logger.info("脚本开始执行...")
+    
     x_urls = []
     for url in urls:
         url = url.strip()
@@ -811,6 +814,20 @@ async def main():
         current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         file.write(f'#EXTINF:-1 tvg-name="{current_time}" tvg-logo="https://gitee.com/mytv-android/myTVlogo/raw/main/img/Dog狗频道.png" group-title="更新时间",{current_time}\n')
         file.write(f"http://example.com/update_time.mp4\n")
+    
+    # 计算并输出总耗时
+    end_time = time.time()
+    total_duration = end_time - start_time
+    hours = int(total_duration // 3600)
+    minutes = int((total_duration % 3600) // 60)
+    seconds = int(total_duration % 60)
+    
+    logger.info(f"脚本执行完成！")
+    logger.info(f"总耗时: {hours}小时{minutes}分钟{seconds}秒 ({total_duration:.2f}秒)")
+    logger.info(f"总共处理频道: {len(all_results)} 个")
+    logger.info(f"可用频道: {len(results)} 个")
+    logger.info(f"不可用频道: {len(error_channels)} 个")
+    logger.info(f"成功率: {len(results)/len(all_results)*100:.2f}%" if len(all_results) > 0 else "成功率: 0%")
 
 
 if __name__ == "__main__":
