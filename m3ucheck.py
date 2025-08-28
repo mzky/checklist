@@ -113,9 +113,9 @@ class TSStreamChecker:
     
     def __init__(self, 
                  buffer_size: int = 8192, 
-                 check_duration: int = 3,
-                 response_time_threshold: int = 100,  # 响应时间阈值(毫秒)
-                 request_timeout: int = 3):            # 请求超时时间(秒)
+                 check_duration: int = 5,
+                 response_time_threshold: int = 120,  # 响应时间阈值(毫秒)
+                 request_timeout: int = 5):            # 请求超时时间(秒)
         """
         TS流检测模块初始化
         :param buffer_size: 接收缓冲区大小
@@ -669,7 +669,7 @@ async def main():
                 # 检测流稳定性 - 使用TSStreamChecker进行真正的TS流解析
                 checker = TSStreamChecker(
                     check_duration=5,          # 5秒检测时间
-                    response_time_threshold=100,  # 响应时间阈值
+                    response_time_threshold=120,  # 响应时间阈值
                     request_timeout=5           # 按规范设置5秒超时
                 )
                 is_stable = await checker.check_stream(session, channel_url)
@@ -713,10 +713,10 @@ async def main():
             return int(match.group())
         else:
             # 返回一个大整数而不是inf，避免排序问题
-            return 999999
+            return 99999
     
     # 创建信号量控制并发
-    channel_semaphore = asyncio.Semaphore(10)  # 控制并发数，探测ts用10并发
+    channel_semaphore = asyncio.Semaphore(20)  # 控制并发数，探测ts用10并发
     
     # 所有操作都在同一个session上下文中进行，避免session关闭问题
     async with aiohttp.ClientSession(
