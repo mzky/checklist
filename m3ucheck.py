@@ -359,7 +359,7 @@ class TSStreamChecker:
             ts_urls = await self.parse_playlist(session, url)
             
             if not ts_urls:
-                logger.warning(f"未找到有效的TS片段: {url}")
+                logger.debug(f"未找到有效的TS片段: {url}")
                 return False
                 
             logger.info(f"找到{len(ts_urls)}个TS片段，开始检测...")
