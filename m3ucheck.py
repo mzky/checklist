@@ -96,7 +96,7 @@ urls = [
 ]
 
 # 异步HTTP请求工具函数
-async def fetch_url(session, url, headers=None, timeout=5, stream=False):
+async def fetch_url(session, url, headers=None, timeout=3, stream=False):
     """异步获取URL内容，支持流式传输"""
     try:
         async with session.get(url, headers=headers, timeout=timeout, stream=stream) as response:
@@ -615,7 +615,7 @@ async def fetch_json(session, url, semaphore):
 
 async def main():
     start_time = time.time()  # 记录开始时间
-    logger.info("脚本开始执行...")
+    logger.info("\n脚本开始执行...")
     
     # 使用异步并发处理频道检测
     results = []
@@ -716,7 +716,7 @@ async def main():
             return 99999
     
     # 创建信号量控制并发
-    channel_semaphore = asyncio.Semaphore(20)  # 控制并发数，探测ts用10并发
+    channel_semaphore = asyncio.Semaphore(50)  # 控制并发数，探测ts用10并发
     
     # 所有操作都在同一个session上下文中进行，避免session关闭问题
     async with aiohttp.ClientSession(
@@ -801,13 +801,14 @@ async def main():
     channel_categories = [
         {"name": "央视频道","keywords": ["CCTV"]},
         {"name": "卫视频道","keywords": ["卫视"]},
-        {"name": "影视频道","keywords": ["电影","影院","影视","剧场"]},
+        {"name": "影视频道","keywords": ["电影","影院","影视","剧场","电视剧"]},
         {"name": "IPTV频道","keywords": ["IPTV"]},
+        {"name": "科教频道","keywords": ["CETV","教育","科教","学堂","科学"]},
         {"name": "卡通频道","keywords": ["CCTV14","少儿","卡通","动画","儿童","宝贝","哈哈"]},
         {"name": "体育频道","keywords": ["体育","赛事","奥运","冬奥","英超","NBA","垂钓","CETV4","足球","台球","CCTV5","CCTV5+","CCTV16","武术","IPTV5+","高尔夫"]},
         # exclude_keywords 是排除的关键字
-        {"name": "其他频道","keywords": [""],"exclude_keywords": ["CCTV","卫视","电影","影院","影视","剧场","IPTV","少儿","卡通","动画","儿童","宝贝","哈哈",
-        "体育","赛事","奥运","冬奥","英超","NBA","垂钓","CETV4","足球","台球","武术","高尔夫","测试","快乐购","广告","购物"]}
+        {"name": "其他频道","keywords": [""],"exclude_keywords": ["CCTV","卫视","电影","影院","影视","剧场","电视剧","IPTV","CETV","教育","科教","学堂","科学",
+        "少儿","卡通","动画","儿童","宝贝","哈哈","体育","赛事","奥运","冬奥","英超","NBA","垂钓","教育","足球","台球","武术","高尔夫","测试","快乐购","广告","购物"]}
     ]
 
     with open("itvlist.m3u", 'w', encoding='utf-8') as file:
@@ -848,3 +849,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    
