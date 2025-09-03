@@ -5,6 +5,9 @@ https://github.com/ssili126/tv
 
 https://github.com/seadai794/tv
 
+
+源：https://raw.githubusercontent.com/mzky/checklist/master/itvlist.m3u
+
 ```
 1、探测ts稳定性和响应时间（慢但准确，完成需要30多分钟，加线程数可以缩短时间，但易报错）
 2、在频道下的播放源以响应时间排序
