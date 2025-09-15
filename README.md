@@ -7,7 +7,9 @@ https://github.com/seadai794/tv
 
 
 播放源：https://raw.githubusercontent.com/mzky/checklist/master/itvlist.m3u
+
 或
+
 源代理：https://raw.staticdn.net/mzky/checklist/master/itvlist.m3u
 
 ```
