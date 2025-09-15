@@ -21,6 +21,7 @@ https://github.com/seadai794/tv
 6、去掉了经常导致异常的库eventlet
 7、建议在TV同网络下执行，否则不准确
 8、增加可自定义的分类，见代码注释
+9、通过阿里云电信线路服务器，每天将运行结果自动更新到当前github
 ```
 <img width="738" height="288" alt="image" src="https://github.com/user-attachments/assets/fd4bf98a-f718-4f24-92ac-51dc39a382f5" />
 <img width="1912" height="954" alt="image" src="https://github.com/user-attachments/assets/91cd6e65-1053-48db-9081-79828ef42923" />
