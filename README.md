@@ -19,11 +19,22 @@ https://github.com/seadai794/tv
 4、使用“当前”全部可用的ip列表
 5、全部使用异步多线程
 6、去掉了经常导致异常的库eventlet
-7、建议在TV同网络下执行，否则不准确
-8、增加可自定义的分类，见代码注释
-9、通过阿里云电信线路服务器，每天将运行结果自动更新到当前github
+7、增加可自定义的分类，见代码注释
+8、通过阿里云[北京电信]线路服务器，每天将运行结果自动更新到当前github
+9、其它线路，如联通\电信\广电等宽带，建议在TV同网络下执行并获取播放源
 ```
 <img width="738" height="288" alt="image" src="https://github.com/user-attachments/assets/fd4bf98a-f718-4f24-92ac-51dc39a382f5" />
 <img width="1912" height="954" alt="image" src="https://github.com/user-attachments/assets/91cd6e65-1053-48db-9081-79828ef42923" />
 <img width="720" height="327" alt="image" src="https://github.com/user-attachments/assets/b3ad6c9a-b61e-4ec4-9f3e-4517f925eb56" />
+
+
+
+<!-- LOG_START -->
+最后更新: 2025-09-24 11:45:22
+---
+脚本执行结果！
+总耗时: 1h23m145s (5025.67s)
+总频道: 1000 个，可用 78 个，不可用 122 个
+成功率: 7.80%
+<!-- LOG_END -->
 
