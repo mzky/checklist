@@ -136,7 +136,7 @@ class TSStreamChecker:
     def __init__(self, 
                  buffer_size: int = 8192, 
                  check_duration: int = 5,             #  ：5秒
-                 response_time_threshold: int = 150,  # 放宽响应时间阈值(毫秒)
+                 response_time_threshold: int = 120,  # 放宽响应时间阈值(毫秒)
                  request_timeout: int = 5):           # 降低请求超时时间(秒)
         """
         TS流检测模块初始化
@@ -331,7 +331,7 @@ class TSStreamChecker:
                     buffer = b""
                     chunk_count = 0
                     packet_count = 0
-                    max_packets = 50  # 限制处理的数据包数量
+                    max_packets = 20  # 限制处理的数据包数量
                     
                     try:
                         # 使用异步迭代器获取数据块
@@ -912,7 +912,7 @@ async def main():
     logger.info(f"不可用频道: {len(error_channels)} 个")
     logger.info(f"成功率: {len(results)/len(all_results)*100:.2f}%" if len(all_results) > 0 else "成功率: 0%")
     
-    path = "./checklist/README.md"
+    path = "./README.md"
     s, e = "<!-- LOG_START -->", "<!-- LOG_END -->"
     nl = "\n"
     log = [
