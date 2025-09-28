@@ -43,10 +43,12 @@ urls = [
 "http://115.48.160.1:9901",
 "http://115.59.9.1:9901",
 "http://116.128.242.1:9901",
+"http://116.128.243.1:9902",
 "http://116.9.204.1:9901",
 "http://117.174.99.1:9901",
 "http://119.125.131.1:9901",
 "http://119.129.172.1:9901",
+"http://1.15.231.1:9901",
 "http://1.180.2.1:9901",
 "http://1.195.130.1:9901",
 "http://1.195.131.1:9901",
@@ -136,6 +138,7 @@ urls = [
 "http://61.136.172.1:9901",
 "http://61.156.228.1:8154",
 "http://61.184.46.1:9901",
+"http://61.49.248.1:9901",
 "http://81.70.56.1:9901",
 "http://81.71.102.1:9901",
 "http://tpc.x3322.net:9901",
@@ -947,7 +950,7 @@ async def main():
     seconds = int(total_duration % 60)
     
     logger.info(f"脚本执行完成！")
-    logger.info(f"总耗时: {hours}小时{minutes}分钟{seconds}秒 ({total_duration:.2f}秒)")
+    logger.info(f"总耗时: {hours}小时 {minutes} 分 {seconds}秒 ({total_duration:.2f}秒)")
     logger.info(f"总共处理频道: {len(all_results)} 个")
     logger.info(f"可用频道: {len(results)} 个")
     logger.info(f"不可用频道: {len(error_channels)} 个")
@@ -961,7 +964,7 @@ async def main():
         "---",
         "脚本执行结果！",
         "```",
-        f"总耗时: {hours}h{minutes}m{seconds}s ({total_duration:.2f}s)",
+        f"总耗时: {hours}小时 {minutes}分 {seconds}秒 ({total_duration:.2f}秒)",
         f"总频道: {len(all_results)} 个，可用 {len(results)} 个，不可用 {len(error_channels)} 个",
         f"成功率: {len(results)/len(all_results)*100:.2f}%" if all_results else "成功率: 0%",
         "```"
