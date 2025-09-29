@@ -549,6 +549,7 @@ def clean_channel_name(name):
             "北京卡通": "卡酷动画",
             "卡酷少儿": "卡酷动画",
             "卡酷卡通": "卡酷动画",
+            "卡酷动漫": "卡酷动画",
             "嘉佳卡": "嘉佳卡通",
             "佳佳卡通": "嘉佳卡通",
             "嘉佳卡通通": "嘉佳卡通",
@@ -915,10 +916,10 @@ async def main():
         {"name": "影视频道","keywords": ["电影","影院","影视","剧场","电视剧"]},
         {"name": "科教频道","keywords": ["CETV","教育","科教","学堂","世界地理","科学"]},
         {"name": "卡通频道","keywords": ["CCTV14","少儿","卡通","动画","儿童","宝贝","哈哈"]},
-        {"name": "娱乐综艺","keywords": ["相声小品","戏曲","音乐","综艺","大片"]},
+        {"name": "娱乐综艺","keywords": ["相声小品","戏曲","音乐","综艺","大片","梨园"]},
         {"name": "体育频道","keywords": ["体育","赛事","奥运","冬奥","英超","NBA","垂钓","CETV4","足球","台球","CCTV5","CCTV5+","CCTV16","武术","IPTV5+","高尔夫"]},
         # exclude_keywords 是排除的关键字
-        {"name": "其他频道","keywords": [""],"exclude_keywords": ["CCTV","CGTN","卫视","电影","影院","影视","剧场","电视剧","IPTV","CETV","教育","科教","学堂","科学","少儿","卡通","动画","儿童","宝贝","哈哈","体育","赛事","奥运","冬奥","英超","NBA","垂钓","教育","足球","台球","武术","高尔夫","测试","快乐购","广告","购物","相声小品","戏曲","音乐","综艺","大片"]}
+        {"name": "其他频道","keywords": [""],"exclude_keywords": ["CCTV","CGTN","卫视","电影","影院","影视","剧场","电视剧","IPTV","CETV","教育","科教","学堂","科学","少儿","卡通","动画","儿童","宝贝","哈哈","体育","赛事","奥运","冬奥","英超","NBA","垂钓","教育","足球","台球","武术","高尔夫","测试","快乐购","广告","购物","相声小品","戏曲","音乐","综艺","大片","梨园"]}
     ]
 
     with open("itvlist.m3u", 'w', encoding='utf-8') as file:
@@ -950,10 +951,10 @@ async def main():
     seconds = int(total_duration % 60)
     
     logger.info(f"脚本执行完成！")
-    logger.info(f"总耗时: {hours}小时 {minutes} 分 {seconds}秒 ({total_duration:.2f}秒)")
-    logger.info(f"总共处理频道: {len(all_results)} 个")
-    logger.info(f"可用频道: {len(results)} 个")
-    logger.info(f"不可用频道: {len(error_channels)} 个")
+    logger.info(f"总耗时: {hours}小时{minutes}分{seconds}秒({total_duration:.2f}秒)")
+    logger.info(f"总共处理频道: {len(all_results)}个")
+    logger.info(f"可用频道: {len(results)}个")
+    logger.info(f"不可用频道: {len(error_channels)}个")
     logger.info(f"成功率: {len(results)/len(all_results)*100:.2f}%" if len(all_results) > 0 else "成功率: 0%")
     
     path = "./checklist/README.md"
@@ -964,9 +965,9 @@ async def main():
         "---",
         "脚本执行结果！",
         "```",
-        f"总耗时: {hours}小时 {minutes}分 {seconds}秒 ({total_duration:.2f}秒)",
-        f"总频道: {len(all_results)} 个，可用 {len(results)} 个，不可用 {len(error_channels)} 个",
-        f"成功率: {len(results)/len(all_results)*100:.2f}%" if all_results else "成功率: 0%",
+        f"总耗时: {hours}小时{minutes}分{seconds}秒({total_duration:.2f}秒)",
+        f"总频道: {len(all_results)}个，可用{len(results)}个，不可用{len(error_channels)}个",
+        f"成功率: {len(results)/len(all_results)*100:.2f}%" if all_results else " 0%",
         "```"
     ]
 
