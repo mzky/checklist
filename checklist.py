@@ -863,7 +863,7 @@ async def main():
     # 对结果进行排序（先按频道名称排序,再按响应时间排序）
     results.sort(key=lambda x: (channel_key(x[0]), x[3] if len(x) > 3 else float('inf')))
 
-    result_counter = 99  # 每个频道最多个数
+    result_counter = 9  # 每个频道最多个数
 
     def write_channel_to_m3u(file, channel_name, channel_url, group_title, response_time=float('inf')):
         """写入单个频道到M3U文件,包含响应时间信息"""
