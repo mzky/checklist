@@ -817,7 +817,7 @@ async def main():
         elif status == "异常":
             logger.debug(f"检测异常频道（已剔除）：{channel_name} - {error_msg}")
         
-        logger.debug(f"可用频道：{len(results)} 个, 不可用频道：{len(error_channels)} 个, 总频道：{total_count} 个, 总进度：{numberx:.2f} %。")
+        logger.debug(f"有效频道：{len(results)} 个, 无效频道：{len(error_channels)} 个, 总频道：{total_count} 个, 总进度：{numberx:.2f} %。")
     
     def channel_key(channel_name):
         match = re.search(r'\d+', channel_name)
@@ -953,8 +953,8 @@ async def main():
     logger.info(f"脚本执行完成！")
     logger.info(f"总耗时: {hours}小时{minutes}分{seconds}秒({total_duration:.2f}秒)")
     logger.info(f"总共处理频道: {len(all_results)}个")
-    logger.info(f"可用频道: {len(results)}个")
-    logger.info(f"不可用频道: {len(error_channels)}个")
+    logger.info(f"有效频道: {len(results)}个")
+    logger.info(f"无效频道: {len(error_channels)}个")
     logger.info(f"成功率: {len(results)/len(all_results)*100:.2f}%" if len(all_results) > 0 else "成功率: 0%")
     
     path = "./checklist/README.md"
@@ -966,7 +966,7 @@ async def main():
         "脚本执行结果！",
         "```",
         f"总耗时: {hours}小时{minutes}分{seconds}秒({total_duration:.2f}秒)",
-        f"总频道: {len(all_results)}个，可用{len(results)}个，不可用{len(error_channels)}个",
+        f"总频道: {len(all_results)}个，有效{len(results)}个，无效{len(error_channels)}个",
         f"成功率: {len(results)/len(all_results)*100:.2f}%" if all_results else " 0%",
         "```"
     ]
