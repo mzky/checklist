@@ -6,11 +6,10 @@ https://github.com/ssili126/tv
 https://github.com/seadai794/tv
 
 
+代理方式：https://cdn.jsdelivr.net/gh/mzky/checklist@master/itvlist.m3u
+
 播放源：https://raw.githubusercontent.com/mzky/checklist/master/itvlist.m3u
 
-或
-
-源代理：https://raw.staticdn.net/mzky/checklist/master/itvlist.m3u
 
 ```
 1、探测ts稳定性和响应时间（慢但准确，完成需要30多分钟，加线程数可以缩短时间，但易报错）
@@ -30,15 +29,17 @@ https://github.com/seadai794/tv
 
 
 <!-- LOG_START -->
-最后更新: 2025-11-27 05:31:39
+最后更新: 2025-11-28 05:31:43
 ---
 脚本执行结果！
 ```
-总耗时: 0小时31分35秒(1895.77秒)
-总频道: 3530个，有效1278个，无效2252个
-成功率: 36.20%
+总耗时: 0小时31分40秒(1900.01秒)
+总频道: 3593个，有效1374个，无效2219个
+成功率: 38.24%
 ```
 <!-- LOG_END -->
+
+
 
 
 
