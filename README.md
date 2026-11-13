@@ -1,5 +1,6 @@
 ## 已在阿里云搭建 https://github.com/akiralereal/iptv 的 docker，经测试非常好用，当前项目代码不再修改，每日定时更新不变
 
+<img width="1764" height="164" alt="image" src="https://github.com/user-attachments/assets/c945a63e-9e80-4e2f-8356-b76fd833c7bf" />
 
 
 
